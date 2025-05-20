@@ -18,8 +18,6 @@ def set_highlight(index, ws):
         end_index = total
         start_index = max(0, end_index - text_box_count)
 
-    window = lineup[start_index:end_index]
-
     for box_idx, name_idx in enumerate(range(start_index, end_index)):
         school = lineup[name_idx]
 
@@ -34,7 +32,7 @@ def set_highlight(index, ws):
             ws.set_input_settings(
                 source_name,
                 {
-                    "text": f"{"> " if highlighted else ""}{school}",
+                    "text": f"{'> ' if highlighted else ''}{school}",
                     "color1": color,
                     "color2": color,
                 },

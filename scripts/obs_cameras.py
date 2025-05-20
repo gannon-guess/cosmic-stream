@@ -1,4 +1,4 @@
-camera_count = 6
+camera_count = 9
 scene_name = "Cameras"
 
 NORTHWEST = 0
@@ -12,7 +12,7 @@ with open("cameras.txt", "r") as f:
 
 
 def set_text(ws, text, direction):
-    source_name = f"{["nw", "ne", "sw", "se"][direction]}_text"
+    source_name = f"{['nw', 'ne', 'sw', 'se'][direction]}_text"
     try:
         ws.set_input_settings(
             name=source_name,
@@ -27,7 +27,7 @@ def set_text(ws, text, direction):
 
 def set_full_cam(cam_idx, ws):
     for i in range(camera_count):
-        source_name = f"camera {i}"
+        source_name = f"Camera {i}"
         displayed = i == cam_idx
 
         item_id = ws.get_scene_item_id(scene_name, source_name).scene_item_id
@@ -58,10 +58,23 @@ def set_full_cam(cam_idx, ws):
     set_text(ws, "", SOUTHEAST)
 
 
+def is_first_occurrence(lst, index):
+    value = lst[index]
+    return lst.index(value) == index
+
+
 def set_split_cam(ws, cam_idxs):
+    shown_cams = []
+
+    for v in cam_idxs:
+        if v >= 0 and v not in shown_cams:
+            shown_cams.append(v)
+        else:
+            shown_cams.append(-1)
+
     for i in range(camera_count):
-        source_name = f"camera {i}"
-        displayed = i in cam_idxs
+        source_name = f"Camera {i}"
+        displayed = i in shown_cams
 
         item_id = ws.get_scene_item_id(scene_name, source_name).scene_item_id
 
@@ -86,5 +99,8 @@ def set_split_cam(ws, cam_idxs):
                 },
             )
 
-    for direction, cam_idx in enumerate(cam_idxs):
-        set_text(ws, "" if cam_idx < 0 else camera_names[cam_idx], direction)
+    print(f"{shown_cams=}")
+
+    for direction, cam_idx in enumerate(shown_cams):
+        show_text = cam_idx >= 0
+        set_text(ws, camera_names[cam_idx] if show_text else "", direction)
